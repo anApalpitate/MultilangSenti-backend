@@ -1,7 +1,6 @@
 ## 项目结构
 
-```
-shell
+```shell
 /backend
 ├── .gitignore
 ├── README.md

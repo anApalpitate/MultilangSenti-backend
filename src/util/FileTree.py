@@ -88,7 +88,7 @@ def update_readme(tree_path='../resources/filetree.txt', readme_path='../../READ
     if len(parts) < 3:
         new_content = content.strip() + "\n\n```shell\n" + tree_content + "\n```"
     else:
-        parts[1] = f"\nshell\n{tree_content}\n"
+        parts[1] = f"shell\n{tree_content}\n"
         new_content = "```".join(parts)
 
     with open(readme_path, 'w', encoding='utf-8') as f:
