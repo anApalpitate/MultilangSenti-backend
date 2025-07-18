@@ -68,7 +68,7 @@ def write2file(output_path='../resources/filetree.txt'):
     print(f"文件树已保存到: {output_path}")
 
 
-def update_readme(tree_path='../../resources/filetree.txt', readme_path='../../README.md'):
+def update_readme(tree_path='../resources/filetree.txt', readme_path='../../README.md'):
     if not os.path.exists(tree_path):
         print("正在生成文件树")
         write2file(tree_path)
@@ -84,16 +84,17 @@ def update_readme(tree_path='../../resources/filetree.txt', readme_path='../../R
         content = f.read()
 
     parts = content.split("```")
+
     if len(parts) < 3:
         new_content = content.strip() + "\n\n```shell\n" + tree_content + "\n```"
     else:
-        parts[1] = f"shell\n{tree_content}"  # 替换中间内容
+        parts[1] = f"\nshell\n{tree_content}\n"
         new_content = "```".join(parts)
 
     with open(readme_path, 'w', encoding='utf-8') as f:
         f.write(new_content)
 
 
-
+"""该文件不需要依赖于fastapi应用"""
 if __name__ == '__main__':
     update_readme()

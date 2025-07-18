@@ -12,3 +12,4 @@ __pycache__/
 !.vscode/extensions.json
 .idea
 .DS_Store
+desktop.ini
