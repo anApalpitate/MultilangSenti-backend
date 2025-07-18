@@ -1,0 +1,14 @@
+logs
+*.log
+node_modules
+dist
+venv/
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+.cache/
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
