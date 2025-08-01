@@ -59,21 +59,21 @@ def generate_filetree(start_path, prefix='', gitignore_patterns=None):
     return lines
 
 
-def write2file(output_path='../resources/filetree.txt'):
+def write2file(start_path='../../', output_path='../resources/filetree.txt'):
     gitignore_patterns = load_gitignore_patterns()
-    tree_lines = ['/backend', *generate_filetree('../../', gitignore_patterns=gitignore_patterns)]
+    tree_lines = ['/backend', *generate_filetree(start_path=start_path, gitignore_patterns=gitignore_patterns)]
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write('\n'.join(tree_lines))
     print(f"文件树已保存到: {output_path}")
 
 
-def update_readme(tree_path='../resources/filetree.txt', readme_path='../../README.md'):
-    if not os.path.exists(tree_path):
+def update_readme(start_path="../../", output_path='../resources/filetree.txt', readme_path='../../README.md'):
+    if not os.path.exists(output_path):
         print("正在生成文件树")
-        write2file(tree_path)
+        write2file(start_path, output_path)
 
-    with open(tree_path, 'r', encoding='utf-8') as f:
+    with open(output_path, 'r', encoding='utf-8') as f:
         tree_content = f.read()
 
     if not os.path.exists(readme_path):
@@ -97,4 +97,7 @@ def update_readme(tree_path='../resources/filetree.txt', readme_path='../../READ
 
 """该文件不需要依赖于fastapi应用"""
 if __name__ == '__main__':
-    update_readme()
+    update_readme(start_path="../../", output_path="../resources/filetree.txt", readme_path="../../README.md")
+    update_readme(start_path="../../../MultilangSenti-frontend/",
+                  output_path="../../../MultilangSenti-frontend/filetree.txt",
+                  readme_path="../../../MultilangSenti-frontend/README.md")

@@ -6,3 +6,5 @@ pytest
 sqlalchemy~=2.0.41
 passlib~=1.7.4
 python-jose~=3.5.0
+requests
+bcrypt==4.0.1

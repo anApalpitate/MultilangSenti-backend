@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -21,8 +21,10 @@ def register(user_in: UserCreate, db: Session = Depends(get_db)):
     :param db:
     :return: 注册成功的用户对象
     """
+    if user_in.username == "" or user_in.password == "":
+        raise HTTPException(status_code=400, detail="用户名或密码不能为空")
     if getByName(db, user_in.username):
-        raise HTTPException(status_code=400, detail="用户名已存在")
+        raise HTTPException(status_code=400, detail="用户名已被注册")
     if not examine_username(user_in.username):
         raise HTTPException(status_code=400, detail="用户名不符合规范")
     if not examine_password(user_in.password, level=0):
@@ -41,9 +43,13 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     :return:包含 access_token 和 token_type 的字典（用于后续身份认证）
     """
     user = getByName(db, form_data.username)
-    if not user or not verify_password(form_data.password, user.hashed_password):
+    if form_data.username == "" or form_data.password == "":
+        raise HTTPException(status_code=400, detail="用户名或密码不能为空")
+    if not user:
+        raise HTTPException(status_code=401, detail="请先注册")
+    if not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="用户名或密码错误")
-    user.last_login = datetime.now(UTC)
+    user.last_login = datetime.now(timezone.utc)
     db.commit()
 
     access_token = create_access_token(data={"sub": str(user.id)})
@@ -71,7 +77,7 @@ def get_current_user(token: str = Depends(OAuth2PasswordBearer(tokenUrl="/auth/l
 
 
 @auth_router.get("/me", response_model=UserOut)
-def read_users_me(current_user=Depends(get_current_user)):
+def get_me(current_user=Depends(get_current_user)):
     """
     接口,获取当前登录用户信息
     :param current_user: 当前登录用户对象

@@ -4,11 +4,13 @@ from logging.handlers import RotatingFileHandler
 
 from colorama import Fore, Style, init
 
+from config import get_config
+
 init(autoreset=True)
 
 # ====== 配置 ======
-LOG_DIR = "../logs"
-os.makedirs(LOG_DIR, exist_ok=True)
+log_dir = get_config().LOG_PATH
+os.makedirs(log_dir, exist_ok=True)
 
 LOG_FORMAT = "[%(asctime)s] [%(levelname)s]   (%(module)s.%(funcName)s:%(lineno)d)  - %(message)s"
 DATE_FORMAT = "%m-%d %H:%M"
@@ -32,7 +34,7 @@ def create_file_handler(filename, level, formatter, enable_file=True):
     if not enable_file:
         return None
     handler = RotatingFileHandler(
-        os.path.join(LOG_DIR, filename),
+        os.path.join(log_dir, filename),
         maxBytes=5 * 1024 * 1024,
         backupCount=3,
         encoding="utf-8"
@@ -74,16 +76,15 @@ def build_logger(name, level, filename,
 
 class Logger:
     def __init__(self):
-        self._all = build_logger("all", logging.DEBUG, "all.log", enable_stream=False)
         self._info = build_logger("info", logging.INFO, "info.log")
         self._debug = build_logger("debug", logging.DEBUG, "debug.log")
         self._error = build_logger("error", logging.ERROR, "error.log")
 
-    def _log(self, level_logger, msg, *args, prefix="", stacklevel=3, **kwargs):
+    @staticmethod
+    def _log(level_logger, msg, *args, prefix="", stacklevel=3, **kwargs):
         if prefix:
             msg = prefix + msg
         level_logger.log(level_logger.level, msg, *args, stacklevel=stacklevel, **kwargs)
-        self._all.log(level_logger.level, msg, *args, stacklevel=stacklevel, **kwargs)
 
     def info(self, msg, *args, **kwargs):
         self._log(self._info, msg, *args, **kwargs)
@@ -107,11 +108,12 @@ def log_init(clear=False):
     build_logger("uvicorn.error", logging.WARNING, "error.log")
     if clear:
         log_clean()
+    log.info("🌊日志初始化完成")
 
 
 def log_clean():
-    for filename in os.listdir(LOG_DIR):
-        file_path = os.path.join(LOG_DIR, filename)
+    for filename in os.listdir(log_dir):
+        file_path = os.path.join(log_dir, filename)
         if os.path.isfile(file_path):
             with open(file_path, "w", encoding="utf-8"):
                 pass

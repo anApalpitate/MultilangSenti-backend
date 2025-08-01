@@ -2,9 +2,12 @@ class BaseConfig:
     """
     静态配置基本类
     """
-    HOST = "localhost"
+    HOST = "127.0.0.1"
     PORT = 8080
     RELOAD = True
+    # 路径配置
+    LOG_PATH = "../logs"
+    DB_PATH = "./resources/data.db"
 
 
 class DevConfig(BaseConfig):
