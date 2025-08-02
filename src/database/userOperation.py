@@ -11,8 +11,8 @@ def getById(db: Session, user_id: int):
     return db.query(User).filter(User.id == user_id).first()
 
 
-def create_user(db: Session, username: str, hashed_password: str):
-    user = User(username=username, hashed_password=hashed_password)
+def create_user(db: Session, username: str, hashed_password: str, role="user"):
+    user = User(username=username, hashed_password=hashed_password, role=role)
     db.add(user)
     db.commit()
     db.refresh(user)

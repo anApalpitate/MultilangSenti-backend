@@ -14,7 +14,6 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     """
     创建JWT访问令牌
-
     :param data: 包含要编码进JWT负载的字典数据（如用户标识）
     :param expires_delta: 可选的过期时间间隔，如果未指定则默认使用ACCESS_TOKEN_EXPIRE_MINUTES
     :return: 生成的JWT字符串
@@ -37,7 +36,7 @@ def verify_token(token: str) -> Optional[str]:
         user_id: str = payload.get("sub")
         if user_id is None:
             return None
-        return user_id
+        return {"user_id": user_id, "role": payload.get("role")}
     except ExpiredSignatureError:
         return "EXPIRED"
     except JWTError:

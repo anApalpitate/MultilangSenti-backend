@@ -30,7 +30,7 @@ def register(user_in: UserCreate, db: Session = Depends(get_db)):
     if not examine_password(user_in.password, level=0):
         raise HTTPException(status_code=400, detail="密码不符合规范")
     hashed_pw = get_password_hash(user_in.password)
-    user = create_user(db, user_in.username, hashed_pw)
+    user = create_user(db, user_in.username, hashed_pw, role=user_in.role)
     return user
 
 
@@ -52,7 +52,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
     user.last_login = datetime.now(timezone.utc)
     db.commit()
 
-    access_token = create_access_token(data={"sub": str(user.id)})
+    access_token = create_access_token(data={"sub": str(user.id), "role": user.role})
     return {"access_token": access_token, "token_type": "bearer"}
 
 
@@ -64,7 +64,9 @@ def get_current_user(token: str = Depends(OAuth2PasswordBearer(tokenUrl="/auth/l
     :param db: 数据库会话，依赖注入
     :return: 当前登录用户对象
     """
-    user_id = verify_token(token)
+    token_data = verify_token(token)
+    user_id = token_data.get("user_id")
+
     if user_id == "EXPIRED":
         raise HTTPException(status_code=401, detail="登录状态已过期，请重新登录")
     if user_id is None:

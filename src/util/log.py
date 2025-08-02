@@ -17,6 +17,9 @@ DATE_FORMAT = "%m-%d %H:%M"
 
 
 class ColorFormatter(logging.Formatter):
+    """
+    自定义日志格式化器，基于日志级别为控制台日志添加颜色。
+    """
     COLORS = {
         logging.DEBUG: Fore.CYAN,
         logging.INFO: Fore.GREEN,
@@ -30,7 +33,15 @@ class ColorFormatter(logging.Formatter):
         return f"{color}{super().format(record)}{Style.RESET_ALL}"
 
 
-def create_file_handler(filename, level, formatter, enable_file=True):
+def create_file_handler(filename: str, level: int, formatter: logging.Formatter, enable_file: bool = True):
+    """
+    创建一个带有日志轮转功能的文件日志处理器
+    @:param filename: 日志文件名
+    @:param level: 日志等级
+    @:param formatter: 日志格式化器
+    @:param enable_file: 是否启用文件日志处理
+    @:return: logging.Handler | None
+    """
     if not enable_file:
         return None
     handler = RotatingFileHandler(
@@ -44,7 +55,14 @@ def create_file_handler(filename, level, formatter, enable_file=True):
     return handler
 
 
-def create_stream_handler(level, enable_stream=True, enable_color=True):
+def create_stream_handler(level: int, enable_stream: bool = True, enable_color: bool = True):
+    """
+   创建一个用于控制台输出的日志处理器。
+   @:param level: 日志等级
+   @:param enable_stream: 是否启用控制台日志输出
+   @:param enable_color: 是否启用彩色输出
+   @:return: 控制台日志处理器或 None
+   """
     if not enable_stream:
         return None
     handler = logging.StreamHandler()
@@ -54,7 +72,7 @@ def create_stream_handler(level, enable_stream=True, enable_color=True):
     return handler
 
 
-def build_logger(name, level, filename,
+def build_logger(name: str, level: int, filename: str,
                  enable_stream=True,
                  enable_file=True):
     logger = logging.getLogger(name)
@@ -75,6 +93,10 @@ def build_logger(name, level, filename,
 
 
 class Logger:
+    """
+    自定义日志类
+    """
+
     def __init__(self):
         self._info = build_logger("info", logging.INFO, "info.log")
         self._debug = build_logger("debug", logging.DEBUG, "debug.log")
@@ -99,8 +121,7 @@ class Logger:
         self._log(self._error, msg, *args, **kwargs)
 
 
-# 导出实例类
-log = Logger()
+log = Logger()  # 导出日志实例类
 
 
 def log_init(clear=False):
