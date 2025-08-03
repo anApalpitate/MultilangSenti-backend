@@ -1,46 +1,38 @@
 ## 项目结构
 
 ```shell
-/backend
-├── .gitignore
-├── README.md
-├── docs
-│   ├── 前端设计文档.md
-│   ├── 接口文档.md
-│   ├── 流程文档.md
-│   └── 需求文档.md
-├── requirements.txt
-└── src
-    ├── api
-    │   ├── __init__.py
-    │   └── auth.py
-    ├── config.py
-    ├── database
-    │   ├── __init__.py
-    │   ├── session.py
-    │   └── userOperation.py
-    ├── main.py
-    ├── model
-    │   ├── __init__.py
-    │   └── user.py
-    ├── resources
-    │   ├── data.db
-    │   └── filetree.txt
-    ├── service
-    │   └── __init__.py
-    ├── test
-    │   ├── .pytest_cache
-    │   │   ├── .gitignore
-    │   │   ├── CACHEDIR.TAG
-    │   │   ├── README.md
-    │   │   └── v
-    │   │       └── cache
-    │   │           ├── lastfailed
-    │   │           └── nodeids
-    │   └── test_auth.py
-    └── util
-        ├── FileTree.py
-        ├── __init__.py
-        ├── authUtil.py
-        └── log.py
+/src
+├── api
+│   ├── __init__.py
+│   ├── auth.py
+│   └── file.py
+├── config.py
+├── database
+│   ├── __init__.py
+│   ├── fileOperation.py
+│   ├── session.py
+│   └── userOperation.py
+├── main.py
+├── model
+│   ├── __init__.py
+│   ├── user.py
+│   └── userFile.py
+├── resources
+│   ├── data.db
+├── service
+│   └── __init__.py
+├── test
+│   ├── files
+│   │   ├── file1.txt
+│   │   ├── file2.jpg
+│   │   ├── file3.pdf
+│   │   ├── file4.png
+│   │   └── file5.md
+│   ├── test_auth.py
+│   └── test_file.py
+└── util
+    ├── FileTree.py
+    ├── __init__.py
+    ├── authUtil.py
+    └── log.py
 ```

@@ -86,9 +86,9 @@ def examine_password(password: str, level: int = 0) -> bool:
 def examine_username(username: str) -> bool:
     """
     检查用户名是否符合要求：
-    - 长度在 4~20 个字符之间
+    - 长度在 4~30 个字符之间
     - 不能以下划线开头
     :param username: 待检查用户名
     :return: True 合格，False 不合格
     """
-    return 4 <= len(username) <= 20 and not username.startswith("_")
+    return 4 <= len(username) <= 30 and not username.startswith("_")

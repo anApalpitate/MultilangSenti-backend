@@ -1,7 +1,9 @@
 from datetime import datetime, timezone
+from typing import Optional
 
 from pydantic import BaseModel
 from sqlalchemy import Column, DateTime, Integer, String
+from sqlalchemy.orm import relationship
 
 from database.session import Base
 
@@ -16,6 +18,13 @@ class User(Base):
 
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     last_login = Column(DateTime, nullable=True)
+    # 关联字段  ↓↓↓
+    files = relationship("UserFile", back_populates="owner", cascade="all, delete-orphan")
+
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
 
 
 class UserCreate(BaseModel):
@@ -24,16 +33,11 @@ class UserCreate(BaseModel):
     role: str = "user"
 
 
-class UserLogin(BaseModel):
-    username: str
-    password: str
-
-
 class UserOut(BaseModel):
     id: int
     username: str
     created_at: datetime
-    last_login: datetime
+    last_login: Optional[datetime] = None
 
     class Config:
         from_attributes = True

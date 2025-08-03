@@ -1,13 +1,18 @@
+import os
+
+
 class BaseConfig:
     """
     静态配置基本类
+    根路径：src文件夹
     """
     HOST = "127.0.0.1"
     PORT = 8080
     RELOAD = True
     # 路径配置
     LOG_PATH = "../logs"
-    DB_PATH = "./resources/data.db"
+    RESOURCE_PATH = "./resources"
+    DB_PATH = os.path.join(RESOURCE_PATH, "data.db")
 
 
 class DevConfig(BaseConfig):

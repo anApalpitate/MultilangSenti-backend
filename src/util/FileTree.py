@@ -1,26 +1,22 @@
 import fnmatch
 import os
 
+IGNORED_EXTENSIONS = {'.log', '.tmp', '.pyc', '.lock', '.swp'}
+IGNORED_NAMES = {'node_modules', '__pycache__', '.git', '.DS_Store', 'filetree.txt', ".pytest_cache"}
 
-def load_gitignore_patterns(gitignore_path='../../.gitignore'):
+
+def load_gitignore_patterns(gitignore_path):
     patterns = set()
-    if os.path.exists(gitignore_path):
-        with open(gitignore_path, 'r', encoding='utf-8') as f:
-            for line in f:
-                line = line.strip()
-                if not line or line.startswith('#'):
-                    continue
-                patterns.add(line)
+    if not os.path.exists(gitignore_path):
+        print(".gitignore 文件不存在")
+        return set()
+    with open(gitignore_path, 'r', encoding='utf-8') as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith('#'):
+                continue
+            patterns.add(line)
     return patterns
-
-
-IGNORED_EXTENSIONS = {
-    '.log', '.tmp', '.pyc', '.lock', '.swp'
-}
-
-IGNORED_NAMES = {
-    'node_modules', '__pycache__', '.git', '.DS_Store', 'FileTree.txt'
-}
 
 
 def is_ignored(name, full_path, gitignore_patterns):
@@ -59,31 +55,42 @@ def generate_filetree(start_path, prefix='', gitignore_patterns=None):
     return lines
 
 
-def write2file(start_path='../../', output_path='../resources/filetree.txt'):
-    gitignore_patterns = load_gitignore_patterns()
-    tree_lines = ['/backend', *generate_filetree(start_path=start_path, gitignore_patterns=gitignore_patterns)]
+def write2file(project_root, output_path):
+    src_path = os.path.join(project_root, 'src')
+    gitignore_path = os.path.join(project_root, '.gitignore')
+    gitignore_patterns = load_gitignore_patterns(gitignore_path)
+
+    tree_lines = ['/src', *generate_filetree(src_path, gitignore_patterns=gitignore_patterns)]
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write('\n'.join(tree_lines))
     print(f"文件树已保存到: {output_path}")
+    return tree_lines
 
 
-def update_readme(start_path="../../", output_path='../resources/filetree.txt', readme_path='../../README.md'):
-    if not os.path.exists(output_path):
-        print("正在生成文件树")
-        write2file(start_path, output_path)
+def update_readme(project_root: str, write_to_file: bool = False):
+    src_path = os.path.join(project_root, 'src')
+    gitignore_path = os.path.join(project_root, '.gitignore')
+    gitignore_patterns = load_gitignore_patterns(gitignore_path)
 
-    with open(output_path, 'r', encoding='utf-8') as f:
-        tree_content = f.read()
+    tree_lines = ['/src', *generate_filetree(src_path, gitignore_patterns=gitignore_patterns)]
 
+    output_path = os.path.join(project_root, 'filetree.txt')
+    if write_to_file:
+        with open(output_path, 'w', encoding='utf-8') as f:
+            f.write('\n'.join(tree_lines))
+        print(f"文件树保存至 {output_path}")
+
+    readme_path = os.path.join(project_root, 'README.md')
     if not os.path.exists(readme_path):
-        print("README 文件不存在")
+        print(f"README 文件不存在: {readme_path}")
         return
 
     with open(readme_path, 'r', encoding='utf-8') as f:
         content = f.read()
 
     parts = content.split("```")
+    tree_content = '\n'.join(tree_lines)
 
     if len(parts) < 3:
         new_content = content.strip() + "\n\n```shell\n" + tree_content + "\n```"
@@ -93,11 +100,12 @@ def update_readme(start_path="../../", output_path='../resources/filetree.txt', 
 
     with open(readme_path, 'w', encoding='utf-8') as f:
         f.write(new_content)
+    print(f"README.md 已更新文件树内容")
 
 
-"""该文件不需要依赖于fastapi应用"""
 if __name__ == '__main__':
-    update_readme(start_path="../../", output_path="../resources/filetree.txt", readme_path="../../README.md")
-    update_readme(start_path="../../../MultilangSenti-frontend/",
-                  output_path="../../../MultilangSenti-frontend/filetree.txt",
-                  readme_path="../../../MultilangSenti-frontend/README.md")
+    backend_root = os.path.abspath('../../')
+    update_readme(backend_root, write_to_file=True)
+
+    frontend_root = os.path.abspath('../../../MultilangSenti-frontend')
+    update_readme(frontend_root, write_to_file=True)

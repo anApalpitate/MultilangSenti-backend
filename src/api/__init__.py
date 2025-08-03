@@ -1,8 +1,9 @@
 from api.auth import auth_router
+from api.file import file_router
 
 
 def router_init(app):
-    routers = [auth_router]
+    routers = [auth_router, file_router]
     for router in routers:
         app.include_router(router)
     from util import log
